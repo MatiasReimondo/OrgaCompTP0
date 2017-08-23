@@ -19,6 +19,9 @@ int stdin_file(char *fd){
             if (is_capicua(word, i) == 0) {
                 print_word_in_file(fp,word, i);
             }
+            if(input_char == '\n'){
+                fprintf(fp,"\n");
+            }
             word[0] = '\0';
             i = 0;
         }
@@ -44,6 +47,9 @@ int file_stdout(char *fd){
             if (is_capicua(word, i) == 0) {
                 print_word(word, i);
             }
+            if(input_char == '\n'){
+                printf("\n");
+            }
             word[0] = '\0';
             i = 0;
         }
@@ -68,6 +74,9 @@ int filein_fileout(char *fi, char *fo){
         } else {
             if (is_capicua(word, i) == 0) {
                 print_word_in_file(fpw,word, i);
+            }
+            if(input_char == '\n'){
+                fprintf(fpw,"\n");
             }
             word[0] = '\0';
             i = 0;
@@ -133,6 +142,7 @@ int no_arguments(){
             i = 0;
         }
     }
+
     return 0;
 }
 

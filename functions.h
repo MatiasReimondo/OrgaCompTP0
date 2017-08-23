@@ -9,6 +9,7 @@
 //lista de caracteres legales o permitidos por el enunciado
 static const char LEGAL_CHARS[] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890-_";
 
+
 //Lee de la entrada estandar y escribe las capicuas en un archivo
 int stdin_file(char *fd);
 
