@@ -46,5 +46,7 @@ int versionDisplay();
 
 int helpDisplay();
 
+int version_option(int argc, char*argv[]);
+
 
 #endif //UNTITLED_FUNCTIONS_H

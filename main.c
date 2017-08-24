@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         two_arguments(argc,argv);
     }
     else if(argc == HELP_VERSION){
-        one_argument(argc,argv);
+        version_option(argc,argv);
     }
     else {
         printf("Comandos Incorrectos");

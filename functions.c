@@ -207,8 +207,9 @@ int versionDisplay(){
     printf("TP0 - Version 1.0 FIUBA 2017\n");
     printf("Alumnos:\n");
     printf("Charytoniuk, Martin 96354\n");
-    printf("Perez, Martin  \n");
+    printf("Perez, Martin  97378 \n");
     printf("Reimondo, Matias 95899\n");
+    printf("\n");
     return 0;
 }
 
@@ -224,7 +225,27 @@ int helpDisplay(){
             "-o, --output  Location of the output file.\n"
             "Examples:\n"
             "tp0 -i ~/input -o ~/output\n");
+    printf("\n");
     return 0;
+}
 
+int version_option(int argc, char*argv[]){
+    int opt;
+    opt = getopt(argc,argv,OPTIONS);
+    while(opt != -1){
+        switch(opt){
+            case 'V':
+                versionDisplay();
+                break;
+            case 'h':
+                helpDisplay();
+                break;
+            default:
+                printf("No existe el comando \n");
+                break;
+        }
+        opt = getopt(argc,argv,OPTIONS);
+    }
+    return 0;
 }
 
