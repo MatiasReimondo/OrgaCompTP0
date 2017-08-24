@@ -90,7 +90,8 @@ int filein_fileout(char *fi, char *fo){
 
 int is_valid_char(char input_char){
     int is_valid = 0;
-    for (int i = 0; i < sizeof(LEGAL_CHARS) ; ++i) {
+    int i;
+    for (i = 0; i < sizeof(LEGAL_CHARS) ; ++i) {
         if(input_char == LEGAL_CHARS[i]){
             is_valid =1;
         }
@@ -99,14 +100,16 @@ int is_valid_char(char input_char){
 }
 
 void print_word(char array[MAX_LONG], int size_word){
-    for (int i = 0; i <size_word ; ++i) {
+    int i;
+    for (i = 0; i <size_word ; ++i) {
         printf("%c",array[i]);
     }
     printf("%c",' ');
 }
 
 void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word){
-    for (int i = 0; i <size_word ; ++i) {
+    int i;
+    for (i = 0; i <size_word ; ++i) {
         fprintf(f,"%c",array[i]);
     }
     fprintf(f,"%c",' ');
@@ -115,7 +118,8 @@ void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word){
 int is_capicua(char array[MAX_LONG], int size_word){
     int capicua = 0;
     int last_letter = size_word-1;
-    for (int i = 0; i <size_word ; ++i) {
+    int i;
+    for (i = 0; i <size_word ; ++i) {
         if(toupper(array[i]) != toupper(array[last_letter-i])){
             capicua++;
         }
