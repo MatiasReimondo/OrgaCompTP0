@@ -3,6 +3,7 @@
 
 #define TWO_ARGS 5 //numero de argumentos -i -o
 #define ONE_ARG 3 // numero de argumentos -i/-o
+#define HELP_VERSION 2
 #define NO_ARGS 1 // Sin argumentos
 
 //Bloque main, lo unico qu hace es redirigir al respectivo comportamiento
@@ -17,6 +18,9 @@ int main(int argc, char *argv[]) {
     }
     else if(argc == TWO_ARGS){
         two_arguments(argc,argv);
+    }
+    else if(argc == HELP_VERSION){
+        one_argument(argc,argv);
     }
     else {
         printf("Comandos Incorrectos");

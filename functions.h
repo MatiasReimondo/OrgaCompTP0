@@ -9,6 +9,8 @@
 //lista de caracteres legales o permitidos por el enunciado
 static const char LEGAL_CHARS[] = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890-_";
 
+static const char OPTIONS[] = "Vhio";
+
 
 //Lee de la entrada estandar y escribe las capicuas en un archivo
 int stdin_file(char *fd);
@@ -39,6 +41,10 @@ int file_stdout(char *fd);
 
 // Lee de un archivo y escribe en otro archivo
 int filein_fileout(char *fi, char *fo);
+
+int versionDisplay();
+
+int helpDisplay();
 
 
 #endif //UNTITLED_FUNCTIONS_H

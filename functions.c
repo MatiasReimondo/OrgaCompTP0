@@ -1,6 +1,7 @@
 #include "functions.h"
 #include <ctype.h>
 #include <string.h>
+#include <getopt.h>
 
 
 int stdin_file(char *fd){
@@ -21,6 +22,8 @@ int stdin_file(char *fd){
             }
             if(input_char == '\n'){
                 fprintf(fp,"\n");
+            }else {
+                fprintf(fp," ");
             }
             word[0] = '\0';
             i = 0;
@@ -49,6 +52,8 @@ int file_stdout(char *fd){
             }
             if(input_char == '\n'){
                 printf("\n");
+            }else{
+                printf(" ");
             }
             word[0] = '\0';
             i = 0;
@@ -77,6 +82,8 @@ int filein_fileout(char *fi, char *fo){
             }
             if(input_char == '\n'){
                 fprintf(fpw,"\n");
+            }else{
+                fprintf(fpw," ");
             }
             word[0] = '\0';
             i = 0;
@@ -104,7 +111,7 @@ void print_word(char array[MAX_LONG], int size_word){
     for (i = 0; i <size_word ; ++i) {
         printf("%c",array[i]);
     }
-    printf("%c",' ');
+
 }
 
 void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word){
@@ -112,7 +119,6 @@ void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word){
     for (i = 0; i <size_word ; ++i) {
         fprintf(f,"%c",array[i]);
     }
-    fprintf(f,"%c",' ');
 }
 
 int is_capicua(char array[MAX_LONG], int size_word){
@@ -142,6 +148,12 @@ int no_arguments(){
             if(is_capicua(word,i) == 0){
                 print_word(word,i);
             }
+            if(input_char == '\n'){
+                printf("\n");
+            }else{
+                printf(" ");
+            }
+
             word[0]='\0';
             i = 0;
         }
@@ -151,16 +163,30 @@ int no_arguments(){
 }
 
 int one_argument(int argc, char *argv[]){
-    if (strcmp (argv[1], "-o") == 0) {
-        stdin_file(argv[2]);
+    int opt;
+    opt = getopt(argc,argv,OPTIONS);
+    while(opt != -1){
+        switch(opt){
+            case 'V':
+                versionDisplay();
+                break;
+            case 'h':
+                helpDisplay();
+                break;
+            case 'o':
+                stdin_file(argv[2]);
+                break;
+            case 'i':
+                file_stdout(argv[2]);
+                break;
+            default:
+                printf("No existe el comando \n");
+                break;
+        }
+        opt = getopt(argc,argv,OPTIONS);
     }
-    else if (strcmp (argv[1], "-i") == 0) {
-        file_stdout(argv[2]);
-    }
-    else {
-        printf("No existe el comando \n");
-    }
-    return 0;
+
+   return 0;
 }
 
 
@@ -175,5 +201,30 @@ int two_arguments(int argc, char *argv[]){
         printf("No existe el comando \n");
     }
     return 0;
+}
+
+int versionDisplay(){
+    printf("TP0 - Version 1.0 FIUBA 2017\n");
+    printf("Alumnos:\n");
+    printf("Charytoniuk, Martin 96354\n");
+    printf("Perez, Martin  \n");
+    printf("Reimondo, Matias 95899\n");
+    return 0;
+}
+
+int helpDisplay(){
+    printf("Usage:\n"
+            "tp0 -h\n"
+            "tp0 -V\n"
+            "tp0 [options]\n"
+            "Options:\n"
+            "-V, --version Print version and quit.\n"
+            "-h, --help    Print this information.\n"
+            "-i, --input   Location of the input file.\n"
+            "-o, --output  Location of the output file.\n"
+            "Examples:\n"
+            "tp0 -i ~/input -o ~/output\n");
+    return 0;
+
 }
 
