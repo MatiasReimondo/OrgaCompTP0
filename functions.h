@@ -19,10 +19,10 @@ int stdin_file(char *fd);
 int is_valid_char(char input_char);
 
 //Imprime la palabra en la salida estandar
-void print_word(char array[MAX_LONG], int size_word);
+void print_word(char array[MAX_LONG], int size_word, int words_printed);
 
 //Imprime en el archivo de salida
-void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word);
+void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word, int words_printed);
 
 // Devuelve 0 si es capicua o algun numero mayor a 0 si no lo es
 int is_capicua(char array[MAX_LONG], int size_word);
