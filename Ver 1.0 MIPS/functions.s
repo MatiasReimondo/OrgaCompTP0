@@ -20,9 +20,6 @@ $LC0:
 	.align	2
 $LC1:
 	.ascii	"\n\000"
-	.align	2
-$LC2:
-	.ascii	" \000"
 	.text
 	.align	2
 	.globl	stdin_file
@@ -42,6 +39,7 @@ stdin_file:
 	move	$fp,$sp
 	sw	$4,1088($fp)
 	sw	$0,1056($fp)
+	sw	$0,1060($fp)
 	lw	$4,1088($fp)
 	la	$5,$LC0
 	la	$25,fopen
@@ -55,18 +53,18 @@ $L18:
 	la	$4,__sF
 	la	$25,__srget
 	jal	$31,$25
-	sb	$2,1064($fp)
+	sb	$2,1068($fp)
 	b	$L22
 $L21:
 	la	$2,__sF
 	lw	$3,0($2)
 	move	$4,$3
 	lbu	$4,0($4)
-	sb	$4,1064($fp)
+	sb	$4,1068($fp)
 	addu	$3,$3,1
 	sw	$3,0($2)
 $L22:
-	lbu	$2,1064($fp)
+	lbu	$2,1068($fp)
 	sb	$2,28($fp)
 	sll	$2,$2,24
 	sra	$3,$2,24
@@ -78,8 +76,8 @@ $L20:
 	move	$4,$2
 	la	$25,is_valid_char
 	jal	$31,$25
-	sw	$2,1060($fp)
-	lw	$2,1060($fp)
+	sw	$2,1064($fp)
+	lw	$2,1064($fp)
 	beq	$2,$0,$L23
 	addu	$3,$fp,32
 	lw	$2,1056($fp)
@@ -101,8 +99,12 @@ $L23:
 	lw	$4,24($fp)
 	move	$5,$2
 	lw	$6,1056($fp)
+	lw	$7,1060($fp)
 	la	$25,print_word_in_file
 	jal	$31,$25
+	lw	$2,1060($fp)
+	addu	$2,$2,1
+	sw	$2,1060($fp)
 $L25:
 	lb	$3,28($fp)
 	li	$2,10			# 0xa
@@ -111,13 +113,8 @@ $L25:
 	la	$5,$LC1
 	la	$25,fprintf
 	jal	$31,$25
-	b	$L27
+	sw	$0,1060($fp)
 $L26:
-	lw	$4,24($fp)
-	la	$5,$LC2
-	la	$25,fprintf
-	jal	$31,$25
-$L27:
 	sb	$0,32($fp)
 	sw	$0,1056($fp)
 	b	$L18
@@ -135,7 +132,7 @@ $L19:
 	.size	stdin_file, .-stdin_file
 	.rdata
 	.align	2
-$LC3:
+$LC2:
 	.ascii	"r\000"
 	.text
 	.align	2
@@ -156,47 +153,48 @@ file_stdout:
 	move	$fp,$sp
 	sw	$4,1088($fp)
 	sw	$0,1056($fp)
+	sw	$0,1060($fp)
 	lw	$4,1088($fp)
-	la	$5,$LC3
+	la	$5,$LC2
 	la	$25,fopen
 	jal	$31,$25
 	sw	$2,24($fp)
-$L29:
+$L28:
 	lw	$3,24($fp)
 	lw	$2,24($fp)
 	lw	$2,4($2)
 	addu	$2,$2,-1
 	sw	$2,4($3)
-	bgez	$2,$L32
+	bgez	$2,$L31
 	lw	$4,24($fp)
 	la	$25,__srget
 	jal	$31,$25
-	sb	$2,1064($fp)
-	b	$L33
-$L32:
+	sb	$2,1068($fp)
+	b	$L32
+$L31:
 	lw	$2,24($fp)
 	lw	$3,0($2)
 	move	$4,$3
 	lbu	$4,0($4)
-	sb	$4,1064($fp)
+	sb	$4,1068($fp)
 	addu	$3,$3,1
 	sw	$3,0($2)
-$L33:
-	lbu	$2,1064($fp)
+$L32:
+	lbu	$2,1068($fp)
 	sb	$2,28($fp)
 	sll	$2,$2,24
 	sra	$3,$2,24
 	li	$2,-1			# 0xffffffffffffffff
-	bne	$3,$2,$L31
-	b	$L30
-$L31:
+	bne	$3,$2,$L30
+	b	$L29
+$L30:
 	lb	$2,28($fp)
 	move	$4,$2
 	la	$25,is_valid_char
 	jal	$31,$25
-	sw	$2,1060($fp)
-	lw	$2,1060($fp)
-	beq	$2,$0,$L34
+	sw	$2,1064($fp)
+	lw	$2,1064($fp)
+	beq	$2,$0,$L33
 	addu	$3,$fp,32
 	lw	$2,1056($fp)
 	addu	$3,$3,$2
@@ -205,36 +203,36 @@ $L31:
 	lw	$2,1056($fp)
 	addu	$2,$2,1
 	sw	$2,1056($fp)
-	b	$L29
-$L34:
+	b	$L28
+$L33:
 	addu	$2,$fp,32
 	move	$4,$2
 	lw	$5,1056($fp)
 	la	$25,is_capicua
 	jal	$31,$25
-	bne	$2,$0,$L36
+	bne	$2,$0,$L35
 	addu	$2,$fp,32
 	move	$4,$2
 	lw	$5,1056($fp)
+	lw	$6,1060($fp)
 	la	$25,print_word
 	jal	$31,$25
-$L36:
+	lw	$2,1060($fp)
+	addu	$2,$2,1
+	sw	$2,1060($fp)
+$L35:
 	lb	$3,28($fp)
 	li	$2,10			# 0xa
-	bne	$3,$2,$L37
+	bne	$3,$2,$L36
 	la	$4,$LC1
 	la	$25,printf
 	jal	$31,$25
-	b	$L38
-$L37:
-	la	$4,$LC2
-	la	$25,printf
-	jal	$31,$25
-$L38:
+	sw	$0,1060($fp)
+$L36:
 	sb	$0,32($fp)
 	sw	$0,1056($fp)
-	b	$L29
-$L30:
+	b	$L28
+$L29:
 	lw	$4,24($fp)
 	la	$25,fclose
 	jal	$31,$25
@@ -265,8 +263,9 @@ filein_fileout:
 	sw	$4,1096($fp)
 	sw	$5,1100($fp)
 	sw	$0,1064($fp)
+	sw	$0,1068($fp)
 	lw	$4,1096($fp)
-	la	$5,$LC3
+	la	$5,$LC2
 	la	$25,fopen
 	jal	$31,$25
 	sw	$2,24($fp)
@@ -275,42 +274,42 @@ filein_fileout:
 	la	$25,fopen
 	jal	$31,$25
 	sw	$2,28($fp)
-$L40:
+$L38:
 	lw	$3,24($fp)
 	lw	$2,24($fp)
 	lw	$2,4($2)
 	addu	$2,$2,-1
 	sw	$2,4($3)
-	bgez	$2,$L43
+	bgez	$2,$L41
 	lw	$4,24($fp)
 	la	$25,__srget
 	jal	$31,$25
-	sb	$2,1072($fp)
-	b	$L44
-$L43:
+	sb	$2,1076($fp)
+	b	$L42
+$L41:
 	lw	$2,24($fp)
 	lw	$3,0($2)
 	move	$4,$3
 	lbu	$4,0($4)
-	sb	$4,1072($fp)
+	sb	$4,1076($fp)
 	addu	$3,$3,1
 	sw	$3,0($2)
-$L44:
-	lbu	$2,1072($fp)
+$L42:
+	lbu	$2,1076($fp)
 	sb	$2,32($fp)
 	sll	$2,$2,24
 	sra	$3,$2,24
 	li	$2,-1			# 0xffffffffffffffff
-	bne	$3,$2,$L42
-	b	$L41
-$L42:
+	bne	$3,$2,$L40
+	b	$L39
+$L40:
 	lb	$2,32($fp)
 	move	$4,$2
 	la	$25,is_valid_char
 	jal	$31,$25
-	sw	$2,1068($fp)
-	lw	$2,1068($fp)
-	beq	$2,$0,$L45
+	sw	$2,1072($fp)
+	lw	$2,1072($fp)
+	beq	$2,$0,$L43
 	addu	$3,$fp,40
 	lw	$2,1064($fp)
 	addu	$3,$3,$2
@@ -319,39 +318,38 @@ $L42:
 	lw	$2,1064($fp)
 	addu	$2,$2,1
 	sw	$2,1064($fp)
-	b	$L40
-$L45:
+	b	$L38
+$L43:
 	addu	$2,$fp,40
 	move	$4,$2
 	lw	$5,1064($fp)
 	la	$25,is_capicua
 	jal	$31,$25
-	bne	$2,$0,$L47
+	bne	$2,$0,$L45
 	addu	$2,$fp,40
 	lw	$4,28($fp)
 	move	$5,$2
 	lw	$6,1064($fp)
+	lw	$7,1068($fp)
 	la	$25,print_word_in_file
 	jal	$31,$25
-$L47:
+	lw	$2,1068($fp)
+	addu	$2,$2,1
+	sw	$2,1068($fp)
+$L45:
 	lb	$3,32($fp)
 	li	$2,10			# 0xa
-	bne	$3,$2,$L48
+	bne	$3,$2,$L46
 	lw	$4,28($fp)
 	la	$5,$LC1
 	la	$25,fprintf
 	jal	$31,$25
-	b	$L49
-$L48:
-	lw	$4,28($fp)
-	la	$5,$LC2
-	la	$25,fprintf
-	jal	$31,$25
-$L49:
+	sw	$0,1068($fp)
+$L46:
 	sb	$0,40($fp)
 	sw	$0,1064($fp)
-	b	$L40
-$L41:
+	b	$L38
+$L39:
 	lw	$4,24($fp)
 	la	$25,fclose
 	jal	$31,$25
@@ -385,26 +383,26 @@ is_valid_char:
 	sb	$2,8($fp)
 	sw	$0,12($fp)
 	sw	$0,16($fp)
-$L51:
+$L48:
 	lw	$2,16($fp)
 	sltu	$2,$2,65
-	bne	$2,$0,$L54
-	b	$L52
-$L54:
+	bne	$2,$0,$L51
+	b	$L49
+$L51:
 	lw	$3,16($fp)
 	la	$2,LEGAL_CHARS
 	addu	$2,$3,$2
 	lb	$3,8($fp)
 	lb	$2,0($2)
-	bne	$3,$2,$L53
+	bne	$3,$2,$L50
 	li	$2,1			# 0x1
 	sw	$2,12($fp)
-$L53:
+$L50:
 	lw	$2,16($fp)
 	addu	$2,$2,1
 	sw	$2,16($fp)
-	b	$L51
-$L52:
+	b	$L48
+$L49:
 	lw	$2,12($fp)
 	move	$sp,$fp
 	lw	$fp,28($sp)
@@ -413,6 +411,9 @@ $L52:
 	.end	is_valid_char
 	.size	is_valid_char, .-is_valid_char
 	.rdata
+	.align	2
+$LC3:
+	.ascii	" \000"
 	.align	2
 $LC4:
 	.ascii	"%c\000"
@@ -435,14 +436,21 @@ print_word:
 	move	$fp,$sp
 	sw	$4,48($fp)
 	sw	$5,52($fp)
+	sw	$6,56($fp)
+	lw	$2,56($fp)
+	blez	$2,$L54
+	la	$4,$LC3
+	la	$25,printf
+	jal	$31,$25
+$L54:
 	sw	$0,24($fp)
-$L57:
+$L55:
 	lw	$2,24($fp)
 	lw	$3,52($fp)
 	slt	$2,$2,$3
-	bne	$2,$0,$L60
-	b	$L56
-$L60:
+	bne	$2,$0,$L58
+	b	$L53
+$L58:
 	lw	$3,48($fp)
 	lw	$2,24($fp)
 	addu	$2,$3,$2
@@ -454,8 +462,8 @@ $L60:
 	lw	$2,24($fp)
 	addu	$2,$2,1
 	sw	$2,24($fp)
-	b	$L57
-$L56:
+	b	$L55
+$L53:
 	move	$sp,$fp
 	lw	$31,40($sp)
 	lw	$fp,36($sp)
@@ -482,14 +490,22 @@ print_word_in_file:
 	sw	$4,48($fp)
 	sw	$5,52($fp)
 	sw	$6,56($fp)
+	sw	$7,60($fp)
+	lw	$2,60($fp)
+	blez	$2,$L60
+	lw	$4,48($fp)
+	la	$5,$LC3
+	la	$25,fprintf
+	jal	$31,$25
+$L60:
 	sw	$0,24($fp)
-$L62:
+$L61:
 	lw	$2,24($fp)
 	lw	$3,56($fp)
 	slt	$2,$2,$3
-	bne	$2,$0,$L65
-	b	$L61
-$L65:
+	bne	$2,$0,$L64
+	b	$L59
+$L64:
 	lw	$3,52($fp)
 	lw	$2,24($fp)
 	addu	$2,$3,$2
@@ -502,8 +518,8 @@ $L65:
 	lw	$2,24($fp)
 	addu	$2,$2,1
 	sw	$2,24($fp)
-	b	$L62
-$L61:
+	b	$L61
+$L59:
 	move	$sp,$fp
 	lw	$31,40($sp)
 	lw	$fp,36($sp)
@@ -532,6 +548,13 @@ is_capicua:
 	lw	$2,36($fp)
 	addu	$2,$2,-1
 	sw	$2,12($fp)
+	lw	$2,32($fp)
+	lb	$2,0($2)
+	bne	$2,$0,$L66
+	lw	$2,8($fp)
+	addu	$2,$2,1
+	sw	$2,8($fp)
+$L66:
 	sw	$0,16($fp)
 $L67:
 	lw	$2,16($fp)
@@ -594,6 +617,7 @@ no_arguments:
 	sw	$28,1072($sp)
 	move	$fp,$sp
 	sw	$0,1056($fp)
+	sw	$0,1060($fp)
 $L73:
 	lw	$2,__sF+4
 	addu	$2,$2,-1
@@ -602,18 +626,18 @@ $L73:
 	la	$4,__sF
 	la	$25,__srget
 	jal	$31,$25
-	sb	$2,1064($fp)
+	sb	$2,1068($fp)
 	b	$L77
 $L76:
 	la	$2,__sF
 	lw	$3,0($2)
 	move	$4,$3
 	lbu	$4,0($4)
-	sb	$4,1064($fp)
+	sb	$4,1068($fp)
 	addu	$3,$3,1
 	sw	$3,0($2)
 $L77:
-	lbu	$2,1064($fp)
+	lbu	$2,1068($fp)
 	sb	$2,24($fp)
 	sll	$2,$2,24
 	sra	$3,$2,24
@@ -625,8 +649,8 @@ $L75:
 	move	$4,$2
 	la	$25,is_valid_char
 	jal	$31,$25
-	sw	$2,1060($fp)
-	lw	$2,1060($fp)
+	sw	$2,1064($fp)
+	lw	$2,1064($fp)
 	beq	$2,$0,$L78
 	addu	$3,$fp,32
 	lw	$2,1056($fp)
@@ -647,8 +671,12 @@ $L78:
 	addu	$2,$fp,32
 	move	$4,$2
 	lw	$5,1056($fp)
+	lw	$6,1060($fp)
 	la	$25,print_word
 	jal	$31,$25
+	lw	$2,1060($fp)
+	addu	$2,$2,1
+	sw	$2,1060($fp)
 $L80:
 	lb	$3,24($fp)
 	li	$2,10			# 0xa
@@ -656,12 +684,8 @@ $L80:
 	la	$4,$LC1
 	la	$25,printf
 	jal	$31,$25
-	b	$L82
+	sw	$0,1060($fp)
 $L81:
-	la	$4,$LC2
-	la	$25,printf
-	jal	$31,$25
-$L82:
 	sb	$0,32($fp)
 	sw	$0,1056($fp)
 	b	$L73
@@ -703,67 +727,67 @@ one_argument:
 	la	$25,getopt
 	jal	$31,$25
 	sw	$2,24($fp)
-$L84:
+$L83:
 	lw	$3,24($fp)
 	li	$2,-1			# 0xffffffffffffffff
-	bne	$3,$2,$L86
-	b	$L85
-$L86:
+	bne	$3,$2,$L85
+	b	$L84
+$L85:
 	lw	$2,24($fp)
 	sw	$2,28($fp)
 	li	$2,104			# 0x68
 	lw	$3,28($fp)
-	beq	$3,$2,$L89
+	beq	$3,$2,$L88
 	lw	$3,28($fp)
 	slt	$2,$3,105
-	beq	$2,$0,$L94
+	beq	$2,$0,$L93
 	li	$2,86			# 0x56
 	lw	$3,28($fp)
-	beq	$3,$2,$L88
-	b	$L92
-$L94:
+	beq	$3,$2,$L87
+	b	$L91
+$L93:
 	li	$2,105			# 0x69
 	lw	$3,28($fp)
-	beq	$3,$2,$L91
+	beq	$3,$2,$L90
 	li	$2,111			# 0x6f
 	lw	$3,28($fp)
-	beq	$3,$2,$L90
-	b	$L92
-$L88:
+	beq	$3,$2,$L89
+	b	$L91
+$L87:
 	la	$25,versionDisplay
 	jal	$31,$25
-	b	$L87
-$L89:
+	b	$L86
+$L88:
 	la	$25,helpDisplay
 	jal	$31,$25
-	b	$L87
-$L90:
+	b	$L86
+$L89:
 	lw	$2,52($fp)
 	addu	$2,$2,8
 	lw	$4,0($2)
 	la	$25,stdin_file
 	jal	$31,$25
-	b	$L87
-$L91:
+	b	$L86
+$L90:
 	lw	$2,52($fp)
 	addu	$2,$2,8
 	lw	$4,0($2)
 	la	$25,file_stdout
 	jal	$31,$25
-	b	$L87
-$L92:
+	b	$L86
+$L91:
 	la	$4,$LC5
 	la	$25,printf
 	jal	$31,$25
-$L87:
+$L86:
 	lw	$4,48($fp)
 	lw	$5,52($fp)
 	la	$6,OPTIONS
 	la	$25,getopt
 	jal	$31,$25
 	sw	$2,24($fp)
-	b	$L84
-$L85:
+	b	$L83
+$L84:
 	move	$2,$0
 	move	$sp,$fp
 	lw	$31,40($sp)
@@ -804,14 +828,14 @@ two_arguments:
 	la	$5,$LC6
 	la	$25,strcmp
 	jal	$31,$25
-	bne	$2,$0,$L96
+	bne	$2,$0,$L95
 	lw	$2,44($fp)
 	addu	$2,$2,12
 	lw	$4,0($2)
 	la	$5,$LC7
 	la	$25,strcmp
 	jal	$31,$25
-	bne	$2,$0,$L96
+	bne	$2,$0,$L95
 	lw	$2,44($fp)
 	addu	$3,$2,16
 	lw	$2,44($fp)
@@ -820,22 +844,22 @@ two_arguments:
 	lw	$5,0($2)
 	la	$25,filein_fileout
 	jal	$31,$25
-	b	$L97
-$L96:
+	b	$L96
+$L95:
 	lw	$2,44($fp)
 	addu	$2,$2,12
 	lw	$4,0($2)
 	la	$5,$LC6
 	la	$25,strcmp
 	jal	$31,$25
-	bne	$2,$0,$L98
+	bne	$2,$0,$L97
 	lw	$2,44($fp)
 	addu	$2,$2,4
 	lw	$4,0($2)
 	la	$5,$LC7
 	la	$25,strcmp
 	jal	$31,$25
-	bne	$2,$0,$L98
+	bne	$2,$0,$L97
 	lw	$2,44($fp)
 	addu	$3,$2,8
 	lw	$2,44($fp)
@@ -844,12 +868,12 @@ $L96:
 	lw	$5,0($2)
 	la	$25,filein_fileout
 	jal	$31,$25
-	b	$L97
-$L98:
+	b	$L96
+$L97:
 	la	$4,$LC5
 	la	$25,printf
 	jal	$31,$25
-$L97:
+$L96:
 	move	$2,$0
 	move	$sp,$fp
 	lw	$31,32($sp)
@@ -986,42 +1010,42 @@ version_option:
 	la	$25,getopt
 	jal	$31,$25
 	sw	$2,24($fp)
-$L103:
+$L102:
 	lw	$3,24($fp)
 	li	$2,-1			# 0xffffffffffffffff
-	bne	$3,$2,$L105
-	b	$L104
-$L105:
+	bne	$3,$2,$L104
+	b	$L103
+$L104:
 	lw	$2,24($fp)
 	sw	$2,28($fp)
 	li	$2,86			# 0x56
 	lw	$3,28($fp)
-	beq	$3,$2,$L107
+	beq	$3,$2,$L106
 	li	$2,104			# 0x68
 	lw	$3,28($fp)
-	beq	$3,$2,$L108
-	b	$L109
-$L107:
+	beq	$3,$2,$L107
+	b	$L108
+$L106:
 	la	$25,versionDisplay
 	jal	$31,$25
-	b	$L106
-$L108:
+	b	$L105
+$L107:
 	la	$25,helpDisplay
 	jal	$31,$25
-	b	$L106
-$L109:
+	b	$L105
+$L108:
 	la	$4,$LC5
 	la	$25,printf
 	jal	$31,$25
-$L106:
+$L105:
 	lw	$4,48($fp)
 	lw	$5,52($fp)
 	la	$6,OPTIONS
 	la	$25,getopt
 	jal	$31,$25
 	sw	$2,24($fp)
-	b	$L103
-$L104:
+	b	$L102
+$L103:
 	move	$2,$0
 	move	$sp,$fp
 	lw	$31,40($sp)
