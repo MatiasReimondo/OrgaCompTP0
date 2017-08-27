@@ -42,10 +42,13 @@ int file_stdout(char *fd);
 // Lee de un archivo y escribe en otro archivo
 int filein_fileout(char *fi, char *fo);
 
+//Muestra la descipcion de la version
 int versionDisplay();
 
+//Muestra el menu de ayuda
 int helpDisplay();
 
+//Comportamiento para mostrar ayuda o opciones
 int version_option(int argc, char*argv[]);
 
 

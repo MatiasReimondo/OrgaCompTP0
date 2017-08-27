@@ -1,3 +1,2 @@
-neuquen,neuquen
--9-
-999,999
+Somos los primeros en completar el TP0.
+Ojo que La fecha de entrega del TP0 es el martes 12 de septiembre.
