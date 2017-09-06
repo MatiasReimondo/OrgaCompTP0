@@ -2,101 +2,51 @@
 #include <ctype.h>
 #include <string.h>
 #include <getopt.h>
+#include <stdlib.h>
 
 
-int stdin_file(char *fd){
-    FILE *fp;
+
+
+int in_out(FILE *fr, FILE *fw){
     char input_char;
-    char word[MAX_LONG];
-    int i = 0;
+    int num_read = 0;
+    int buffer_size = BUFFER_INITIAL_SIZE;
     int words_printed = 0;
-
-    fp = fopen(fd, "w");
-    while ((input_char = getchar()) != EOF) {
+    char *word = malloc(buffer_size);
+    while ((input_char = getc(fr)) != EOF) {
         int is_valid = is_valid_char(input_char);
-        if (is_valid) {
-            word[i] = input_char;
-            i++;
-        } else {
-            if (is_capicua(word, i) == 0) {
-                print_word_in_file(fp,word,i,words_printed);
+        if(is_valid){
+            if (num_read >= buffer_size) {
+                char *new_word;
+                buffer_size = buffer_size +BUFFER_EXTENDS ;
+                new_word = realloc(word, buffer_size);
+                if (new_word == NULL) {
+                    free(word);
+                    return ERROR_NO_MEMORY;
+                }
+                word = new_word;
+            }
+            word[num_read] = input_char;
+            num_read++;
+        }else {
+            if (is_capicua(word, num_read) == 0) {
+                print_word_in_file(fw,word, num_read,words_printed);
                 words_printed++;
             }
             if(input_char == '\n'){
-                fprintf(fp,"\n");
-                words_printed= 0;
-            }
-            word[0] = '\0';
-            i = 0;
-        }
-    }
-    fclose(fp);
-    return 0;
-
-}
-
-int file_stdout(char *fd){
-    FILE *fp;
-    char input_char;
-    char word[MAX_LONG];
-    int i = 0;
-    int words_printed = 0;
-
-    fp = fopen(fd, "r");
-    while ((input_char = getc(fp)) != EOF) {
-        int is_valid = is_valid_char(input_char);
-        if (is_valid) {
-            word[i] = input_char;
-            i++;
-        } else {
-            if (is_capicua(word, i) == 0) {
-                print_word(word, i,words_printed);
-                words_printed++;
-            }
-            if(input_char == '\n'){
-                printf("\n");
+                fprintf(fw,"\n");
                 words_printed = 0;
             }
             word[0] = '\0';
-            i = 0;
+            num_read = 0;
         }
     }
-    fclose(fp);
+    fclose(fr);
+    fclose(fw);
+    free(word);
     return 0;
-}
 
-int filein_fileout(char *fi, char *fo){
-    FILE *fpr, *fpw;
-    char input_char;
-    char word[MAX_LONG];
-    int i = 0;
-    int words_printed = 0;
-
-    fpr = fopen(fi,"r");
-    fpw = fopen(fo,"w");
-    while ((input_char = getc(fpr)) != EOF) {
-        int is_valid = is_valid_char(input_char);
-        if (is_valid) {
-            word[i] = input_char;
-            i++;
-        } else {
-            if (is_capicua(word, i) == 0) {
-                print_word_in_file(fpw,word, i,words_printed);
-                words_printed++;
-            }
-            if(input_char == '\n'){
-                fprintf(fpw,"\n");
-                words_printed = 0;
-            }
-            word[0] = '\0';
-            i = 0;
-        }
     }
-    fclose(fpr);
-    fclose(fpw);
-    return 0;
-}
-
 
 int is_valid_char(char input_char){
     int is_valid = 0;
@@ -109,17 +59,7 @@ int is_valid_char(char input_char){
     return is_valid;
 }
 
-void print_word(char array[MAX_LONG], int size_word, int words_printed){
-    int i;
-    if((words_printed>0)){
-        printf(" ");
-    }
-    for (i = 0; i <size_word ; ++i) {
-        printf("%c",array[i]);
-    }
-}
-
-void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word, int words_printed){
+void print_word_in_file(FILE *f,char array[BUFFER_INITIAL_SIZE], int size_word, int words_printed){
     int i;
     if((words_printed>0)){
         fprintf(f," ");
@@ -129,7 +69,7 @@ void print_word_in_file(FILE *f,char array[MAX_LONG], int size_word, int words_p
     }
 }
 
-int is_capicua(char array[MAX_LONG], int size_word){
+int is_capicua(char array[BUFFER_INITIAL_SIZE], int size_word){
     int capicua = 0;
     int last_letter = size_word-1;
     int i;
@@ -147,33 +87,15 @@ int is_capicua(char array[MAX_LONG], int size_word){
 
 
 int no_arguments(){
-    char input_char;
-    char word[MAX_LONG];
-    int i = 0;
-    int words_printed = 0;
-    while ((input_char = getchar()) != EOF){
-        int is_valid = is_valid_char(input_char);
-        if(is_valid){
-            word[i]=input_char;
-            i++;
-        }else{
-            if(is_capicua(word,i) == 0){
-                print_word(word,i,words_printed);
-                words_printed++;
-            }
-            if(input_char == '\n'){
-                printf("\n");
-                words_printed = 0;
-            }
-            word[0]='\0';
-            i = 0;
-        }
-    }
-    return 0;
+    int exe_code= in_out(stdin,stdout);
+    return exe_code;
 }
 
 int one_argument(int argc, char *argv[]){
     int opt;
+    FILE *fw;
+    FILE *fr;
+    int exe_code;
     opt = getopt(argc,argv,OPTIONS);
     while(opt != -1){
         switch(opt){
@@ -184,10 +106,12 @@ int one_argument(int argc, char *argv[]){
                 helpDisplay();
                 break;
             case 'o':
-                stdin_file(argv[2]);
+                fw = fopen(argv[2],"w");
+                exe_code = in_out(stdin,fw);
                 break;
             case 'i':
-                file_stdout(argv[2]);
+                fr = fopen(argv[2],"r");
+                exe_code= in_out(fr,stdout);
                 break;
             default:
                 printf("No existe el comando \n");
@@ -196,25 +120,32 @@ int one_argument(int argc, char *argv[]){
         opt = getopt(argc,argv,OPTIONS);
     }
 
-   return 0;
+   return exe_code;
 }
 
 
 int two_arguments(int argc, char *argv[]){
+    FILE *fr;
+    FILE *fw;
+    int exe_code;
     if ((strcmp (argv[1], "-o") == 0) && (strcmp (argv[3], "-i") == 0)) {
-        filein_fileout(argv[4],argv[2]);
+        fr = fopen(argv[4],"r");
+        fw = fopen(argv[2],"w");
+        exe_code = in_out(fr,fw);
     }
     else if ((strcmp (argv[3], "-o") == 0) && (strcmp (argv[1], "-i") == 0)) {
-        filein_fileout(argv[2],argv[4]);
+        fr = fopen(argv[2],"r");
+        fw = fopen(argv[4],"w");
+        exe_code = in_out(fr,fw);
     }
     else {
         printf("No existe el comando \n");
     }
-    return 0;
+    return exe_code;
 }
 
 int versionDisplay(){
-    printf("TP0 - Version 1.0 FIUBA 2017\n");
+    printf("TP0 - Version 2.0 FIUBA 2017\n");
     printf("Alumnos:\n");
     printf("Charytoniuk, Martin 96354\n");
     printf("Perez, Martin  97378 \n");
